@@ -1,0 +1,168 @@
+body {
+    background-image: url(../images/assets/floor.png);
+    background-size: 220px;
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.hidden {
+    display: none;
+}
+
+.area {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.player {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 20px;
+    top: 60px;
+    width: 100px;
+    height: 100px;
+    transition: 1600ms;
+    z-index: 1;
+}
+
+.player img {
+    width: auto;
+    height: 100%;
+}
+
+.interaction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    top: 270px;
+    width: 100px;
+    height: 100px;
+    transition: 300ms;
+}
+
+.interaction img {
+    width: auto;
+    height: 100%;
+}
+
+.interaction > .heart {
+    position: absolute;
+    width: 32px;
+    height: auto;
+    transition: 300ms;
+    transform: translateY(10px);
+    opacity: 0.8;
+    z-index: 2;
+}
+
+.box-score {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px;
+    color: #874CCC;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid #874CCC;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 1.4;
+    text-align: center;
+    z-index: 1;
+}
+
+.box-version {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    color: #874CCC;
+    font-size: 12px;
+}
+
+.group {
+    position: absolute;
+    top: 440px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+}
+
+.group .coffee1 {
+    position: absolute;
+    top: -3px;
+    left: 40px;
+}
+
+.group .coffee2 {
+    position: absolute;
+    top: -3px;
+    right: 50px;
+}
+
+.group2 {
+    position: absolute;
+    top: 170px;
+    left: 57%;
+}
+
+.group2 .table {
+    width: 130px;
+    height: 80px;
+}
+
+.group2 .radio {
+    position: absolute;
+    top: -58px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.group3 {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: absolute;
+    top: 140px;
+    left: 50%;
+    transform: translateX(-110%);
+}
+
+.group3 img {
+    width: 52px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
+    padding: 24px;
+    color: #874CCC;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 2px solid #874CCC;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 1.6;
+    z-index: 1;
+}
+
+.dialog .close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: #fff;
+}

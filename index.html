@@ -1,0 +1,379 @@
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joker</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <div class="area">
+        <div class="player"><img src="images/player/idle_right.png"></div>
+        <div class="interaction"><img src="images/interaction/idle_left.png" width="32" height="48"></div>
+        <p class="box-score">Beijos <span class="score"></span></p>
+
+        <div class="group">
+            <img src="images/assets/table.png" class="table">
+            <img src="images/assets/coffee.png" class="coffee1" width="28" height="34">
+            <img src="images/assets/coffee.png" class="coffee2" width="28" height="34">
+        </div>
+
+        <div class="group2">
+            <img src="images/assets/table.png" class="table">
+            <img src="images/assets/radio.png" class="radio" width="100" height="100">
+            <audio id="music" src="images/assets/music.mp3" preload="auto"></audio>
+        </div>
+
+        <div class="group3">
+            <img src="images/assets/q1.png">
+            <img src="images/assets/q2.png">
+            <img src="images/assets/q3.png">
+        </div>
+
+        <p class="dialog" id="dialog" style="display: none;">
+            Para meu amor dos cachos negros, <br><br>
+
+            Dedico este jogo a você, minha paixão sideral. 🖤💜 <br><br>
+
+            Sempre que estiver solitária e eu estiver longe, estarei aqui, para você poder me dar muitos beijos e afagos. <br><br>
+
+            Milhões de beijinhos e todo o meu amor, <br>
+
+            Seu alien dos cachos dourados 👽💜
+
+            <span class="close">x</span>
+        </p>
+
+        <p class="box-version">1.0.0</p>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var player             = document.querySelector('.player');
+            var interaction        = document.querySelector('.interaction');
+            var radio              = document.querySelector('.radio');
+            var scoreText          = document.querySelector('.score');
+            var imgPlayer          = document.querySelector('.player img');
+            var imgInteraction     = document.querySelector('.interaction img');
+            var audio              = document.getElementById('music');
+            var podeInteragir      = false;
+            var podeInteragirRadio = false;
+            var score              = localStorage.getItem('score') ? localStorage.getItem('score') : 0;
+            var canClick           = true;
+
+            scoreText.innerHTML = score;
+            
+            // Clique na tela
+            document.addEventListener('click', function (e) {
+                
+                if (canClick) {
+                    move(e);
+                    canClick = false;
+                }
+                
+                // Interacao com personagem
+                if (calculateDistanceMouse(e) <= 46) {
+                    podeInteragir = true;
+                }
+
+                if (calculateDistanceMouse(e) > 46) {
+                    podeInteragir = false;
+                }
+
+                if (calculateDistance() < 46 && podeInteragir) {
+                    kissAnimation();
+                    kissAnimationInteraction();
+                    spawn();
+                }
+
+                // Interacao com radio
+                if (calculateDistanceMouseRadio(e) <= 56) {
+                    podeInteragirRadio = true;
+                }
+
+                if (calculateDistanceMouseRadio(e) > 56) {
+                    podeInteragirRadio = false;
+                }
+
+                if (calculateDistanceRadio() <= 56 && podeInteragirRadio) {
+                    controleRadio();                 
+                }
+            });
+
+            // Movimento do player
+            function move(e) {
+                var posX = e.clientX;
+                var posY = e.clientY;
+                
+                player.style.left = (posX - player.offsetWidth / 2) + 'px';
+                player.style.top  = (posY - player.offsetHeight / 2) + 'px';
+
+                var playerRect   = player.getBoundingClientRect();
+                var playerX      = playerRect.left;
+                var playerY      = playerRect.top;
+                var playerWidth  = player.offsetWidth;
+                var playerHeight = player.offsetHeight;
+                
+                if (posX < playerX) {
+                    moveLeftAnimation();
+
+                } else if (posX > playerX + playerWidth) {
+                    moveRightAnimation();
+                }
+
+                detectStopMove();
+            }
+
+            // Função para detectar a parada do movimento
+            function detectStopMove() {
+                clearTimeout(moveTimeout);
+
+                var moveTimeout = setTimeout(function() {
+                    distance = calculateDistance();
+
+                    if (distance <= 46) {
+                        podeInteragir = true;
+                    } else {
+                        podeInteragir = false;
+                    }
+
+                    distanceRadio = calculateDistanceRadio();
+
+                    if (distanceRadio <= 56) {
+                        podeInteragirRadio = true;
+                    } else {
+                        podeInteragirRadio = false;
+                    }
+
+                    canClick = true;
+                }, 1600);
+            }
+
+            // Calcular distancia entre player e interacao
+            function calculateDistance() {
+                var rect1 = player.getBoundingClientRect();
+                var rect2 = interaction.getBoundingClientRect();
+                
+                var centerX1 = rect1.left + rect1.width / 2;
+                var centerY1 = rect1.top + rect1.height / 2;
+                var centerX2 = rect2.left + rect2.width / 2;
+                var centerY2 = rect2.top + rect2.height / 2;
+                
+                var distance = Math.sqrt(Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2));
+
+                return distance;
+            }
+
+            // Calcular distancia do clique do mouse com a interacao
+            function calculateDistanceMouse(event) {
+                var clickX = event.clientX;
+                var clickY = event.clientY;
+
+                var divRect = interaction.getBoundingClientRect();
+                var centerX = divRect.left + divRect.width / 2;
+                var centerY = divRect.top + divRect.height / 2;
+
+                var distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
+                
+                return distance;
+            }
+
+            // Calcular distancia entre player e radio
+            function calculateDistanceRadio() {
+                var rect1 = player.getBoundingClientRect();
+                var rect2 = radio.getBoundingClientRect();
+                
+                var centerX1 = rect1.left + rect1.width / 2;
+                var centerY1 = rect1.top + rect1.height / 2;
+                var centerX2 = rect2.left + rect2.width / 2;
+                var centerY2 = rect2.top + rect2.height / 2;
+                
+                var distance = Math.sqrt(Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2));
+
+                return distance;
+            }
+
+            // Calcular distancia do clique do mouse com o radio
+            function calculateDistanceMouseRadio(event) {
+                var clickX = event.clientX;
+                var clickY = event.clientY;
+
+                var divRect = radio.getBoundingClientRect();
+                var centerX = divRect.left + divRect.width / 2;
+                var centerY = divRect.top + divRect.height / 2;
+
+                var distance = Math.sqrt(Math.pow(clickX - centerX, 2) + Math.pow(clickY - centerY, 2));
+                
+                return distance;
+            }
+
+            // Spawn de imagens
+            function spawn() {
+                var img       = new Image();
+                img.src       = 'images/assets/heart-purple.png';
+                img.className = 'heart';
+                
+                var posX = Math.floor(Math.random() * (interaction.offsetWidth));
+                var posY = Math.floor(Math.random() * (interaction.offsetHeight));
+                
+                img.style.left = posX + 'px';
+                img.style.top = posY + 'px';
+                
+                interaction.appendChild(img);
+
+                // Movendo a imagem para cima
+                var initialTop = posY;
+                var interval = setInterval(function () {
+                    initialTop -= 10; // Movendo 10 pixels para cima
+                    img.style.top = initialTop + 'px';
+                }, 50);
+                
+                // Removendo a imagem após um certo tempo
+                setTimeout(function () {
+                    clearInterval(interval); // Parando a animação
+                    interaction.removeChild(img); // Removendo a imagem
+                }, 1000); // Altere o valor 1000 para o tempo que desejar que a imagem permaneça visível
+
+                // Score
+                score++;
+                scoreText.innerHTML = score;
+                localStorage.setItem('score', score);
+            }
+
+            function idleAnimation() {
+                imgPlayer.src = 'images/player/idle_right.png';
+            }
+
+            function kissAnimation() {
+                var sprites = [
+                    'images/player/kiss_1.png',
+                    'images/player/kiss_2.png',
+                ];
+                
+                var index = 0;
+                
+                var interval = setInterval(function() {
+                    imgPlayer.src = sprites[index];
+                    index++;
+                    
+                    if (index >= sprites.length) {
+                        index = 0;
+                    }
+                }, 200);
+                
+                setTimeout(function() {
+                    clearInterval(interval);
+                }, 200 * sprites.length);
+            }
+
+            function moveRightAnimation() {
+                var sprites = [
+                    'images/player/walk_right_1.png',
+                    'images/player/walk_right_2.png',
+                    'images/player/walk_right_3.png',
+                    'images/player/walk_right_4.png',
+                    'images/player/walk_right_5.png',
+                    'images/player/walk_right_6.png',
+                    'images/player/walk_right_7.png',
+                    'images/player/walk_right_8.png'
+                ];
+                
+                var index = 0;
+
+                imgPlayer.src = sprites[0];
+                
+                var interval = setInterval(function() {
+                    imgPlayer.src = sprites[index];
+                    index++;
+                    
+                    if (index >= sprites.length) {
+                        index = 0;
+                    }
+                }, 200);
+                
+                setTimeout(function() {
+                    clearInterval(interval);
+                }, 200 * sprites.length);
+            }
+
+            function moveLeftAnimation() {
+                var sprites = [
+                    'images/player/walk_left_1.png',
+                    'images/player/walk_left_2.png',
+                    'images/player/walk_left_3.png',
+                    'images/player/walk_left_4.png',
+                    'images/player/walk_left_5.png',
+                    'images/player/walk_left_6.png',
+                    'images/player/walk_left_7.png',
+                    'images/player/walk_left_8.png'
+                ];
+                
+                var index = 0;
+                
+                imgPlayer.src = sprites[0];
+                
+                var interval = setInterval(function() {
+                    imgPlayer.src = sprites[index];
+                    index++;
+                    
+                    if (index >= sprites.length) {
+                        index = 0;
+                    }
+                }, 200);
+                
+                setTimeout(function() {
+                    clearInterval(interval);
+                }, 200 * sprites.length);
+            }
+
+            function kissAnimationInteraction() {
+                var sprites = [
+                    'images/interaction/kiss_1.png',
+                    'images/interaction/kiss_2.png',
+                    'images/interaction/idle_left.png',
+                ];
+                
+                var index = 0;
+                
+                var interval = setInterval(function() {
+                    imgInteraction.src = sprites[index];
+                    index++;
+                    
+                    if (index >= sprites.length) {
+                        index = 0;
+                    }
+                }, 200);
+                
+                setTimeout(function() {
+                    clearInterval(interval);
+                }, 200 * sprites.length);
+            }
+
+            function controleRadio() {
+                if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+            }
+
+            var closeDialog   = document.querySelector('.dialog .close');
+            var dialog        = document.getElementById('dialog');
+            var firstVisitKey = 'isFirstVisit';
+
+            closeDialog.addEventListener('click', function() {
+                dialog.style.display = 'none';
+            });
+
+            if (!localStorage.getItem(firstVisitKey)) {
+                dialog.style.display = 'block';
+                localStorage.setItem(firstVisitKey, 'true');
+            }
+        });
+    </script>
+</body>
+</html>
