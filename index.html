@@ -48,7 +48,8 @@
             <span class="close">x</span>
         </p>
 
-        <p class="box-version">1.0.0</p>
+        <p class="box-version">1.0.1</p>
+        <a href="#" class="box-help" id="help">?</a>
     </div>
     
     <script>
@@ -214,7 +215,6 @@
             // Spawn de imagens
             function spawn() {
                 var img       = new Image();
-                img.src       = 'images/assets/heart-purple.png';
                 img.className = 'heart';
                 
                 var posX = Math.floor(Math.random() * (interaction.offsetWidth));
@@ -222,6 +222,15 @@
                 
                 img.style.left = posX + 'px';
                 img.style.top = posY + 'px';
+
+                // Gerar imagem aleatória
+                var randomImg = Math.floor(Math.random() * (10 - 1 + 1) + 1);
+
+                if (randomImg <= 5) {
+                    img.src = 'images/assets/heart-black.png';
+                } else {
+                    img.src = 'images/assets/heart-purple.png';
+                }
                 
                 interaction.appendChild(img);
 
@@ -361,17 +370,25 @@
                 }
             }
 
-            var closeDialog   = document.querySelector('.dialog .close');
-            var dialog        = document.getElementById('dialog');
+            var closeDialog = document.querySelector('.dialog .close');
+            var dialog      = document.getElementById('dialog');
+            var help        = document.getElementById('help');
             var firstVisitKey = 'isFirstVisit';
 
             closeDialog.addEventListener('click', function() {
                 dialog.style.display = 'none';
+                canClick = true;
+            });
+
+            help.addEventListener('click', function() {
+                dialog.style.display = 'block';
+                canClick = false;
             });
 
             if (!localStorage.getItem(firstVisitKey)) {
                 dialog.style.display = 'block';
                 localStorage.setItem(firstVisitKey, 'true');
+                canClick = false;
             }
         });
     </script>

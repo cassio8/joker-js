@@ -89,6 +89,22 @@ body {
     font-size: 12px;
 }
 
+.box-help {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    color: #fff;
+    background-color: #874CCC;
+    font-size: 12px;
+    border-radius: 50%;
+    text-decoration: none;
+}
+
 .group {
     position: absolute;
     top: 440px;
